@@ -1,7 +1,10 @@
 streamlit
-gdown
-pandas
 numpy
-scikit-learn
+gensim
+gdown
+pytesseract
+requests
+Pillow
+PyMuPDF
 tensorflow
-nltk
+beautifulsoup4
