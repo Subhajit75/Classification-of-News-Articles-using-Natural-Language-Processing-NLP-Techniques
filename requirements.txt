@@ -1,8 +1,7 @@
 streamlit
+gdown
+pandas
 numpy
-gensim
-pytesseract
-requests
-Pillow
-PyMuPDF
+scikit-learn
 tensorflow
+nltk
