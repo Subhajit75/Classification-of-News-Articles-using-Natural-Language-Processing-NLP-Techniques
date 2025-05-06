@@ -1,38 +1,56 @@
 import streamlit as st
 import numpy as np
 import gensim
-#import gdown
+import gdown
 import re
 import pytesseract
 import requests
+import os
 from io import BytesIO
 from PIL import Image
 import fitz  # PyMuPDF
 from tensorflow.keras.models import load_model
 from bs4 import BeautifulSoup
-import pytesseract
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # or your actual install path
-
-# Optional: Set Tesseract path (if not in PATH)
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Set Tesseract path (modify this if deploying on Linux or Cloud)
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")
 
-# Load models
+# Label map
+label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci/Tech"}
+
+# Download and load models
 @st.cache_resource
 def load_models():
-    rnn_model = load_model(r"D:\Project_Env\News Article classification\News Article classification\Save_model\news_classification_model_rnn.h5")
-    lstm_model = load_model(r"D:\Project_Env\News Article classification\News Article classification\Save_model\News_classification_model_LSTM_1.h5")
-    return rnn_model, lstm_model
+    os.makedirs("models", exist_ok=True)
+    
+    # Google Drive IDs
+    rnn_id = "17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
+    lstm_id = "1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
 
-# Load embeddings
+    rnn_path = "models/news_classification_model_rnn.h5"
+    lstm_path = "models/News_classification_model_LSTM_1.h5"
+
+    if not os.path.exists(rnn_path):
+        gdown.download(f"https://drive.google.com/uc?id={rnn_id}", rnn_path, quiet=False)
+
+    if not os.path.exists(lstm_path):
+        gdown.download(f"https://drive.google.com/uc?id={lstm_id}", lstm_path, quiet=False)
+
+    return load_model(rnn_path), load_model(lstm_path)
+
+# Download and load embeddings
 @st.cache_resource
 def load_embeddings():
-    return gensim.models.KeyedVectors.load_word2vec_format(
-        r"D:\Project_Env\News Article classification\News Article classification\data\numberbatch-en-19.08.txt", 
-        binary=False
-    )
+    os.makedirs("data", exist_ok=True)
+    emb_id = "18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
+    emb_path = "data/numberbatch-en-19.08.txt"
+
+    if not os.path.exists(emb_path):
+        gdown.download(f"https://drive.google.com/uc?id={emb_id}", emb_path, quiet=False)
+
+    return gensim.models.KeyedVectors.load_word2vec_format(emb_path, binary=False)
 
 # Clean text
 def clean_text(text):
@@ -45,7 +63,7 @@ def clean_text(text):
 def get_embedding_vector(text, word_vectors, embedding_dim=300, max_length=200):
     tokens = text.split()
     embeddings = [word_vectors[word] for word in tokens if word in word_vectors]
-    if len(embeddings) == 0:
+    if not embeddings:
         return np.zeros((max_length, embedding_dim), dtype=np.float32)
     embeddings = np.array(embeddings[:max_length], dtype=np.float32)
     padding_needed = max_length - len(embeddings)
@@ -53,26 +71,19 @@ def get_embedding_vector(text, word_vectors, embedding_dim=300, max_length=200):
         embeddings = np.vstack([embeddings, np.zeros((padding_needed, embedding_dim), dtype=np.float32)])
     return embeddings
 
-# Prediction
+# Predict
 def predict_category(text, rnn_model, lstm_model, word_vectors):
     tokens = text.split()
     embedding = get_embedding_vector(text, word_vectors)
     input_data = np.expand_dims(embedding, axis=0)
-    if len(tokens) <= 20:
-        predictions = rnn_model.predict(input_data)
-        model_used = "RNN"
-    else:
-        predictions = lstm_model.predict(input_data)
-        model_used = "LSTM"
-    predicted_class_index = np.argmax(predictions, axis=1)[0]
+    model, name = (rnn_model, "RNN") if len(tokens) <= 20 else (lstm_model, "LSTM")
+    predictions = model.predict(input_data)
+    idx = np.argmax(predictions, axis=1)[0]
     confidence = float(np.max(predictions))
-    predicted_class_name = label_map[predicted_class_index]
-    return predicted_class_name, model_used, confidence, predictions
+    return label_map[idx], name, confidence, predictions
 
-# Label map
-label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci/Tech"}
+# ---------- Streamlit UI ----------
 
-# ---------- UI Starts ----------
 st.title("📰 News Article Category Classifier")
 st.markdown("Classify news from **text**, **PDF**, **image**, or **website** using AI models (RNN & LSTM) and ConceptNet embeddings.")
 
