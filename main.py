@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import gensim
-import gdown
+#import gdown
 import re
 import pytesseract
 import requests
