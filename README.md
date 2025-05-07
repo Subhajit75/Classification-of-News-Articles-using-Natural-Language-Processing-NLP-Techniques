@@ -143,10 +143,10 @@ graph LR
 
 ```
 news-classifier/
-├── app.py                # Main Streamlit application
+├── main.py                # Main Streamlit application
 ├── models/               # Pretrained models (RNN/LSTM)
 │   ├── news_classification_model_rnn.h5
-│   └── News_classification_model_LSTM_1.h5
+│   └── News_classification_model_LSTM.h5
 ├── data/                 # Embeddings
 │   └── numberbatch-en-19.08.txt
 ├── requirements.txt      # Python dependencies
