@@ -21,6 +21,8 @@ A multi-input AI system that classifies news articles into 4 categories using RN
 - **Confidence scores** and detailed prediction metrics
 - **Streamlit** web interface
 
+
+
 ## Categories 🏷️
 
 1. 🌍 World News
@@ -170,13 +172,6 @@ news-classifier/
 
 
 
-
-
-# Example prediction
-category, model, confidence = predict_news("Tesla unveils new humanoid robot")
-print(f"🏷️ {category} | 🤖 {model} | 🔍 {confidence:.2f}%") 
-
-# Output: 🏷️ 🔬 Sci/Tech | 🤖 RNN | 🔍 94.12%
 
 
 
