@@ -68,10 +68,24 @@ The application will open in your default browser at `localhost:8501`.
    - Models output probabilities for each category
    - Highest probability determines final classification
   
-   🧠 AI Architecture
-Diagram
-Code
+   ## 🧠 AI Architecture
 
+graph TD
+    A[Input] --> B{Input Type}
+    B -->|Text| C[Direct Processing]
+    B -->|PDF| D[Text Extraction]
+    B -->|Image| E[OCR Processing]
+    B -->|URL| F[Web Scraping]
+    C --> G[Text Cleaning]
+    D --> G
+    E --> G
+    F --> G
+    G --> H{Text Length}
+    H -->|≤20 words| I[RNN Model]
+    H -->|>20 words| J[LSTM Model]
+    I --> K[Prediction]
+    J --> K
+    K --> L[Visualization]
 
 
 
