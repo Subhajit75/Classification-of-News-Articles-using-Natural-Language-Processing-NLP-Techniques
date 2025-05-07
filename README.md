@@ -69,7 +69,7 @@ The application will open in your default browser at `localhost:8501`.
    - Highest probability determines final classification
 
 
-### Option 2: ASCII Flowchart
+## ASCII Flowchart
 ```markdown
 ## 🧠 AI Architecture
 ┌──────────────────────┐
