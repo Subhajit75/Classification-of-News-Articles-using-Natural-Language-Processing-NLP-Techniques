@@ -21,7 +21,21 @@ A multi-input AI system that classifies news articles into 4 categories using RN
 - **Confidence scores** and detailed prediction metrics
 - **Streamlit** web interface
 
+## ✨ ConceptNet NumberBatch 19.08
 
+This project uses **ConceptNet NumberBatch 19.08** - multilingual word embeddings that combine:
+- ConceptNet's semantic knowledge
+- Word2Vec-style distributional semantics
+- 300-dimensional vectors for ~500k English terms
+
+**Download Link**:  
+[numberbatch-en-19.08.txt.gz](https://conceptnet.s3.amazonaws.com/downloads/2019/numberbatch/numberbatch-en-19.08.txt.gz) (English only, 217MB compressed)
+
+**Key Features**:
+✔ Pre-trained on ConceptNet 5.7  
+✔ 300-dimensional embeddings  
+✔ Covers 500,000+ English words/phrases  
+✔ MIT License (open for commercial use)  
 
 ## Categories 🏷️
 
