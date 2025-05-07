@@ -67,28 +67,16 @@ The application will open in your default browser at `localhost:8501`.
 3. **Prediction**:
    - Models output probabilities for each category
    - Highest probability determines final classification
-  
-   ## 🧠 AI Architecture
-
-graph TD
-    A[Input] --> B{Input Type}
-    B -->|Text| C[Direct Processing]
-    B -->|PDF| D[Text Extraction]
-    B -->|Image| E[OCR Processing]
-    B -->|URL| F[Web Scraping]
-    C --> G[Text Cleaning]
-    D --> G
-    E --> G
-    F --> G
-    G --> H{Text Length}
-    H -->|≤20 words| I[RNN Model]
-    H -->|>20 words| J[LSTM Model]
-    I --> K[Prediction]
-    J --> K
-    K --> L[Visualization]
 
 
 
+## 🛠️ Tech Stack
+<div align="center">
+Component	Technology
+Framework	TensorFlow · Streamlit
+NLP	ConceptNet · Gensim
+Utilities	Tesseract OCR · PyMuPDF
+</div>
 
 
 
@@ -135,28 +123,19 @@ news-classifier/
 - OCR accuracy depends on image quality
 - Web scraping may fail on JS-heavy sites
 
-## Contributing 🤝
+## 📫 Contact
+<div align="center">
+Email
+LinkedIn
+GitHub
 
-Pull requests are welcome! For major changes, please open an issue first.
+</div>
 
-## License 📜
+## 📜 License
+MIT License © 2023 Subhajit Ghosh
 
-MIT License
-```
+<div align="center">
+Made with ❤️ by Subhajit Ghosh
+Buy Me A Coffee
 
-This README includes:
-- Badges for key technologies
-- Clear feature list
-- Installation instructions
-- Usage guide
-- Technical explanation
-- File structure
-- Dependencies
-- Limitations
-- Contribution guidelines
-
-You may want to:
-1. Replace placeholder GitHub URL
-2. Add your own license if not using MIT
-3. Add deployment instructions if hosting online
-4. Include screenshots by adding an `images/` folder
+</div> ```
