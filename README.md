@@ -3,9 +3,6 @@
 
 # News Article Category Classifier 🌍🏅💼🔬
 
-![Streamlit App](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
-![ConceptNet](https://img.shields.io/badge/ConceptNet-000000?style=for-the-badge)
 
 A multi-input AI system that classifies news articles into 4 categories using RNN/LSTM models with ConceptNet embeddings. Supports text, PDFs, images (OCR), and website URLs.
 
