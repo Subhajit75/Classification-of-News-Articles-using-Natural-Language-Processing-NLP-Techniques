@@ -96,7 +96,6 @@ news-classifier/
 ## Limitations ⚠️
 
 - English language only
-- Best performance on news headlines/short articles
 - OCR accuracy depends on image quality
 - Web scraping may fail on JS-heavy sites
 
