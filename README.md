@@ -67,6 +67,28 @@ The application will open in your default browser at `localhost:8501`.
 3. **Prediction**:
    - Models output probabilities for each category
    - Highest probability determines final classification
+  
+   🧠 AI Architecture
+Diagram
+Code
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## File Structure 📂
 
