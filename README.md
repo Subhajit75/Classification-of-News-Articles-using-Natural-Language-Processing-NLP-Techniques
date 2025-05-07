@@ -1,6 +1,6 @@
-Here's a comprehensive `README.md` file for your **News Article Category Classifier** project:
 
-```markdown
+
+
 # News Article Category Classifier 🌍🏅💼🔬
 
 ![Streamlit App](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
