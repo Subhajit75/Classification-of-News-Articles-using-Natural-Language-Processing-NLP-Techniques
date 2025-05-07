@@ -29,7 +29,7 @@ This project uses **ConceptNet NumberBatch 19.08** - multilingual word embedding
 - 300-dimensional vectors for ~500k English terms
 
 **Download Link**:  
-[numberbatch-en-19.08.txt.gz](https://conceptnet.s3.amazonaws.com/downloads/2019/numberbatch/numberbatch-en-19.08.txt.gz) (English only, 217MB compressed)
+[numberbatch-en-19.08.txt.gz](https://conceptnet.s3.amazonaws.com/downloads/2019/numberbatch/numberbatch-19.08.txt.gz) (English only, 217MB compressed)
 
 **Key Features**:
 ✔ Pre-trained on ConceptNet 5.7  
