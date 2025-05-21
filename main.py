@@ -23,32 +23,44 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 # Download and load models
 @st.cache_resource
 def load_models():
+    import gdown
     os.makedirs("models", exist_ok=True)
-    
-    # Google Drive IDs
-    rnn_id = "17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
-    lstm_id = "1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
+
+    # Correctly formatted Google Drive URLs with export=download
+    rnn_url = "https://drive.google.com/uc?export=download&id=17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
+    lstm_url = "https://drive.google.com/uc?export=download&id=1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
 
     rnn_path = "models/news_classification_model_rnn.h5"
     lstm_path = "models/News_classification_model_LSTM_1.h5"
 
-    if not os.path.exists(rnn_path):
-        gdown.download(f"https://drive.google.com/uc?id={rnn_id}", rnn_path, quiet=False)
+    try:
+        if not os.path.exists(rnn_path):
+            gdown.download(rnn_url, rnn_path, quiet=False, use_cookies=False)
 
-    if not os.path.exists(lstm_path):
-        gdown.download(f"https://drive.google.com/uc?id={lstm_id}", lstm_path, quiet=False)
+        if not os.path.exists(lstm_path):
+            gdown.download(lstm_url, lstm_path, quiet=False, use_cookies=False)
+    except Exception as e:
+        st.error(f"Failed to download models. Make sure your Drive files are public. Error: {e}")
+        st.stop()
 
-    return load_model(rnn_path), load_model(lstm_path)
+    return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # Download and load embeddings
 @st.cache_resource
+@st.cache_resource
 def load_embeddings():
+    import gdown
     os.makedirs("data", exist_ok=True)
-    emb_id = "18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
+
+    emb_url = "https://drive.google.com/uc?export=download&id=18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
     emb_path = "data/numberbatch-en-19.08.txt"
 
-    if not os.path.exists(emb_path):
-        gdown.download(f"https://drive.google.com/uc?id={emb_id}", emb_path, quiet=False)
+    try:
+        if not os.path.exists(emb_path):
+            gdown.download(emb_url, emb_path, quiet=False, use_cookies=False)
+    except Exception as e:
+        st.error(f"Failed to download embeddings. Make sure your Drive file is public. Error: {e}")
+        st.stop()
 
     return gensim.models.KeyedVectors.load_word2vec_format(emb_path, binary=False)
 
