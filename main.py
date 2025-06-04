@@ -6,6 +6,7 @@ import re
 import pytesseract
 import requests
 import os
+os.makedirs("models", exist_ok=True)
 from io import BytesIO
 from PIL import Image
 import fitz  # PyMuPDF
