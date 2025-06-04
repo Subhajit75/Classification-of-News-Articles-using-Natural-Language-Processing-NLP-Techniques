@@ -9,10 +9,10 @@ import os
 from io import BytesIO
 from PIL import Image
 import fitz  # PyMuPDF
-from tensorflow.keras.models import load_model
+import tensorflow as tf
 from bs4 import BeautifulSoup
 
-# Set Tesseract path (modify this if deploying on Linux or Cloud)
+# Set Tesseract path (modify if on Linux or Cloud)
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")
@@ -23,46 +23,35 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 # Download and load models
 @st.cache_resource
 def load_models():
-    import gdown
     os.makedirs("models", exist_ok=True)
-
-    # Correctly formatted Google Drive URLs with export=download
-    rnn_url = "https://drive.google.com/uc?export=download&id=17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
-    lstm_url = "https://drive.google.com/uc?export=download&id=1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
+    
+    # Google Drive IDs
+    rnn_id = "17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
+    lstm_id = "1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
 
     rnn_path = "models/news_classification_model_rnn.h5"
     lstm_path = "models/News_classification_model_LSTM_1.h5"
 
-    try:
-        if not os.path.exists(rnn_path):
-            gdown.download(rnn_url, rnn_path, quiet=False, use_cookies=False)
+    if not os.path.exists(rnn_path):
+        gdown.download(f"https://drive.google.com/uc?id={rnn_id}", rnn_path, quiet=False)
 
-        if not os.path.exists(lstm_path):
-            gdown.download(lstm_url, lstm_path, quiet=False, use_cookies=False)
-    except Exception as e:
-        st.error(f"Failed to download models. Make sure your Drive files are public. Error: {e}")
-        st.stop()
+    if not os.path.exists(lstm_path):
+        gdown.download(f"https://drive.google.com/uc?id={lstm_id}", lstm_path, quiet=False)
 
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # Download and load embeddings
 @st.cache_resource
-@st.cache_resource
 def load_embeddings():
-    import gdown
     os.makedirs("data", exist_ok=True)
-
-    emb_url = "https://drive.google.com/uc?export=download&id=18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
+    emb_id = "18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
     emb_path = "data/numberbatch-en-19.08.txt"
 
-    try:
-        if not os.path.exists(emb_path):
-            gdown.download(emb_url, emb_path, quiet=False, use_cookies=False)
-    except Exception as e:
-        st.error(f"Failed to download embeddings. Make sure your Drive file is public. Error: {e}")
-        st.stop()
+    if not os.path.exists(emb_path):
+        gdown.download(f"https://drive.google.com/uc?id={emb_id}", emb_path, quiet=False)
 
     return gensim.models.KeyedVectors.load_word2vec_format(emb_path, binary=False)
+
 
 # Clean text
 def clean_text(text):
@@ -164,6 +153,7 @@ with col1:
     clean_option = st.checkbox("🧹 Clean and normalize input", value=True)
 with col2:
     classify_btn = st.button("🚀 Classify")
+    
 
 # Classification
 if classify_btn:
