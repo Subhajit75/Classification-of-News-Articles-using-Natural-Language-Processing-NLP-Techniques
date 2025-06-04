@@ -13,7 +13,7 @@ import fitz  # PyMuPDF
 import tensorflow as tf
 from bs4 import BeautifulSoup
 
-# Set Tesseract path (modify if on Linux or Cloud)
+# Set Tesseract path (modify/remove for Linux/Render)
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")
@@ -25,21 +25,19 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 @st.cache_resource
 def load_models():
     os.makedirs("models", exist_ok=True)
-    
-    # Google Drive IDs
-    rnn_id = "17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
-    lstm_id = "1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
+
+    # Google Drive shared file links
+    rnn_url = "https://drive.google.com/uc?id=17aK4XwBbtejoawxoDbg4tyvGaKNsux6F"
+    lstm_url = "https://drive.google.com/uc?id=1eIoSI4RFbNNEicdBPMUmt8z-23nbqztF"
 
     rnn_path = "models/news_classification_model_rnn.h5"
     lstm_path = "models/News_classification_model_LSTM_1.h5"
 
     if not os.path.exists(rnn_path):
-        gdown.download(id=rnn_id, output=rnn_path, quiet=False, use_cookies=False)
-
+        gdown.download(url=rnn_url, output=rnn_path, quiet=False, fuzzy=True)
 
     if not os.path.exists(lstm_path):
-       gdown.download(id=lstm_id, output=lstm_path, quiet=False, use_cookies=False)
-
+        gdown.download(url=lstm_url, output=lstm_path, quiet=False, fuzzy=True)
 
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
@@ -47,14 +45,13 @@ def load_models():
 @st.cache_resource
 def load_embeddings():
     os.makedirs("data", exist_ok=True)
-    emb_id = "18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
+    emb_url = "https://drive.google.com/uc?id=18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
     emb_path = "data/numberbatch-en-19.08.txt"
 
     if not os.path.exists(emb_path):
-        gdown.download(f"https://drive.google.com/uc?id={emb_id}", emb_path, quiet=False)
+        gdown.download(url=emb_url, output=emb_path, quiet=False, fuzzy=True)
 
     return gensim.models.KeyedVectors.load_word2vec_format(emb_path, binary=False)
-
 
 # Clean text
 def clean_text(text):
@@ -122,7 +119,6 @@ elif input_mode == "Image":
     if uploaded_image:
         image = Image.open(uploaded_image)
 
-        # Resize image to a smaller version (e.g., width=300 while maintaining aspect ratio)
         max_width = 300
         w_percent = (max_width / float(image.size[0]))
         h_size = int((float(image.size[1]) * float(w_percent)))
@@ -140,11 +136,8 @@ elif input_mode == "URL":
             with st.spinner("Extracting text from website..."):
                 response = requests.get(url)
                 soup = BeautifulSoup(response.content, "html.parser")
-
-                # Extract visible text from <p> tags
                 paragraphs = soup.find_all("p")
                 input_text = "\n".join(p.get_text() for p in paragraphs if p.get_text().strip())
-
                 if not input_text.strip():
                     st.warning("⚠️ No readable content found on this page.")
         except Exception as e:
@@ -156,7 +149,6 @@ with col1:
     clean_option = st.checkbox("🧹 Clean and normalize input", value=True)
 with col2:
     classify_btn = st.button("🚀 Classify")
-    
 
 # Classification
 if classify_btn:
