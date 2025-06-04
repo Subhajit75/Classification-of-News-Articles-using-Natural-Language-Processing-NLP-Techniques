@@ -33,10 +33,12 @@ def load_models():
     lstm_path = "models/News_classification_model_LSTM_1.h5"
 
     if not os.path.exists(rnn_path):
-        gdown.download(f"https://drive.google.com/uc?id={rnn_id}", rnn_path, quiet=False)
+        gdown.download(id=rnn_id, output=rnn_path, quiet=False, use_cookies=False)
+
 
     if not os.path.exists(lstm_path):
-        gdown.download(f"https://drive.google.com/uc?id={lstm_id}", lstm_path, quiet=False)
+       gdown.download(id=lstm_id, output=lstm_path, quiet=False, use_cookies=False)
+
 
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
