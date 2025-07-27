@@ -1,4 +1,5 @@
 import streamlit as st
+from zipfile import ZipFile
 import numpy as np
 import gensim
 import re
@@ -12,7 +13,7 @@ import tensorflow as tf
 from bs4 import BeautifulSoup
 
 # Set Tesseract path (for local Windows only; remove if on cloud)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+#pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")
 
@@ -28,29 +29,45 @@ def load_models():
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # Load word embeddings (ConceptNet Numberbatch)
-st.sidebar.markdown("### Upload Embedding File")
-uploaded_file = st.sidebar.file_uploader("Upload numberbatch-en-19.08.txt", type=["txt"])
+# ---------------------------- Embedding Download + Load ----------------------------
 
-@st.cache_resource
-def load_embeddings_from_upload(file):
+@st.cache_resource(show_spinner=True)
+def download_embeddings():
+    file_url = "https://github.com/Subhajit75/Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/releases/download/v1.0/numberbatch-en-19.08.txt"
+    local_file = "numberbatch-en-19.08.txt"
+
+    if not os.path.exists(local_file):
+        st.info("📥 Downloading ConceptNet Numberbatch embeddings (1GB)...")
+        response = requests.get(file_url, stream=True)
+        total_size = int(response.headers.get('content-length', 0))
+        block_size = 1024 * 1024  # 1MB
+        progress_bar = st.progress(0)
+        downloaded = 0
+
+        with open(local_file, 'wb') as f:
+            for data in response.iter_content(block_size):
+                f.write(data)
+                downloaded += len(data)
+                progress_bar.progress(min(downloaded / total_size, 1.0))
+        progress_bar.empty()
+        st.success("✅ Embedding file downloaded successfully.")
+    return local_file
+
+@st.cache_resource(show_spinner=True)
+def load_embeddings():
     embeddings = {}
-    header_skipped = False
-    for line in file:
-        if not header_skipped:
-            header_skipped = True
-            continue
-        values = line.decode("utf-8").strip().split(" ")
-        word = values[0]
-        vector = np.asarray(values[1:], dtype='float32')
-        embeddings[word] = vector
+    with open(download_embeddings(), "rb") as file:
+        header_skipped = False
+        for line in file:
+            if not header_skipped:
+                header_skipped = True
+                continue
+            values = line.decode("utf-8").strip().split(" ")
+            word = values[0]
+            vector = np.asarray(values[1:], dtype='float32')
+            embeddings[word] = vector
     return embeddings
 
-if uploaded_file is not None:
-    st.success("Embedding file uploaded successfully.")
-    embeddings = load_embeddings_from_upload(uploaded_file)
-else:
-    st.warning("Please upload the ConceptNet embedding file to continue.")
-    st.stop()
 
 
 # Clean text
