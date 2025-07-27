@@ -28,18 +28,30 @@ def load_models():
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # Load word embeddings (ConceptNet Numberbatch)
+st.sidebar.markdown("### Upload Embedding File")
+uploaded_file = st.sidebar.file_uploader("Upload numberbatch-en-19.08.txt", type=["txt"])
+
 @st.cache_resource
-def load_embeddings():
-    os.makedirs("data", exist_ok=True)
-    emb_path = "data/numberbatch-en-19.08.txt"
+def load_embeddings_from_upload(file):
+    embeddings = {}
+    header_skipped = False
+    for line in file:
+        if not header_skipped:
+            header_skipped = True
+            continue
+        values = line.decode("utf-8").strip().split(" ")
+        word = values[0]
+        vector = np.asarray(values[1:], dtype='float32')
+        embeddings[word] = vector
+    return embeddings
 
-    if not os.path.exists(emb_path):
-        emb_url = "https://drive.google.com/uc?export=download&id=18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
-        response = requests.get(emb_url)
-        with open(emb_path, 'wb') as f:
-            f.write(response.content)
+if uploaded_file is not None:
+    st.success("Embedding file uploaded successfully.")
+    embeddings = load_embeddings_from_upload(uploaded_file)
+else:
+    st.warning("Please upload the ConceptNet embedding file to continue.")
+    st.stop()
 
-    return gensim.models.KeyedVectors.load_word2vec_format(emb_path, binary=False)
 
 # Clean text
 def clean_text(text):
