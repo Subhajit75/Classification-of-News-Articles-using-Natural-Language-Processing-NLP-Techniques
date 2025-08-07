@@ -44,6 +44,21 @@ This project uses **ConceptNet NumberBatch 19.08** - multilingual word embedding
 3. 💼 Business
 4. 🔬 Science/Technology
 
+
+## File Structure 📂
+
+```
+Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/
+  ├── main.py                # Main Streamlit application
+  ├── models/               # Pretrained models (RNN/LSTM)
+  │   ├── news_classification_model_rnn.h5
+  │   └── News_classification_model_LSTM_1.h5
+  ├── data/                 # Embeddings
+  │   └── numberbatch-en-19.08.txt
+  ├── requirements.txt      # Python dependencies
+  └── README.md            # This file
+```
+
 ## Installation ⚙️
 
 1. Clone the repository:
@@ -152,20 +167,6 @@ graph LR
 
 
 
-
-## File Structure 📂
-
-```
-news-classifier/
-├── main.py                # Main Streamlit application
-├── models/               # Pretrained models (RNN/LSTM)
-│   ├── news_classification_model_rnn.h5
-│   └── News_classification_model_LSTM_1.h5
-├── data/                 # Embeddings
-│   └── numberbatch-en-19.08.txt
-├── requirements.txt      # Python dependencies
-└── README.md            # This file
-```
 
 ## Dependencies 📦
 
