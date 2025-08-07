@@ -125,7 +125,7 @@ elif input_mode == "PDF":
             input_text = "\n".join([page.get_text() for page in pdf])
 
 elif input_mode == "Image":
-    st.warning("⚠️ Image input via OCR is disabled in the deployed version.")
+    st.warning("⚠️ Image input via OCR is disabled in the deployed version in Render.")
     # To re-enable in local use: uncomment below and re-add pytesseract
     # uploaded_image = st.file_uploader("🖼️ Upload Image File", type=["jpg", "jpeg", "png"])
     # if uploaded_image:
@@ -179,4 +179,5 @@ if classify_btn:
         with st.expander("📈 Prediction Details"):
             for idx, prob in enumerate(full_probs[0]):
                 st.write(f"{label_map[idx]}: {prob:.4f}")
+
 
