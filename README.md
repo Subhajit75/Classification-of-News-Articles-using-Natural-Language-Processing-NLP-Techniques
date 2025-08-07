@@ -14,7 +14,7 @@ A multi-input AI system that classifies news articles into 4 categories using RN
 - **Multiple input formats**:
   - 📝 Direct text input
   - 📄 PDF document parsing
-  - 🖼️ Image OCR (Tesseract)
+  - 🖼️ Image OCR (Tesseract)  
   - 🌐 Web scraping (URL)
 - **ConceptNet NumberBatch** embeddings (300D)
 - **Clean text preprocessing** with regex
@@ -53,8 +53,9 @@ Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques
   ├── models/               # Pretrained models (RNN/LSTM)
   │   ├── news_classification_model_rnn.h5
   │   └── News_classification_model_LSTM_1.h5
-  ├── data/                 # Embeddings
-  │   └── numberbatch-en-19.08.txt
+  ├── .devcontainer/                 #
+  │   └── devcontainer.json
+  ├──  runtime.txt
   ├── requirements.txt      # Python dependencies
   └── README.md            # This file
 ```
