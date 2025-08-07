@@ -3,7 +3,7 @@ from zipfile import ZipFile
 import numpy as np
 import gensim
 import re
-import pytesseract
+# import pytesseract  # 🔴 Removed for Render deployment
 import requests
 import os
 from io import BytesIO
@@ -11,9 +11,6 @@ from PIL import Image
 import fitz  # PyMuPDF
 import tensorflow as tf
 from bs4 import BeautifulSoup
-
-# Set Tesseract path (for local Windows only; remove if on cloud)
-#pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")
 
@@ -25,10 +22,8 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 def load_models():
     rnn_path = "news_classification_model_rnn.h5"
     lstm_path = "News_classification_model_LSTM_1.h5"
-
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
-# Load word embeddings (ConceptNet Numberbatch)
 # ---------------------------- Embedding Download + Load ----------------------------
 
 @st.cache_resource(show_spinner=True)
@@ -67,8 +62,6 @@ def load_embeddings():
             vector = np.asarray(values[1:], dtype='float32')
             embeddings[word] = vector
     return embeddings
-
-
 
 # Clean text
 def clean_text(text):
@@ -132,19 +125,18 @@ elif input_mode == "PDF":
             input_text = "\n".join([page.get_text() for page in pdf])
 
 elif input_mode == "Image":
-    uploaded_image = st.file_uploader("🖼️ Upload Image File", type=["jpg", "jpeg", "png"])
-    if uploaded_image:
-        image = Image.open(uploaded_image)
-
-        max_width = 300
-        w_percent = (max_width / float(image.size[0]))
-        h_size = int((float(image.size[1]) * float(w_percent)))
-        resized_image = image.resize((max_width, h_size), Image.Resampling.LANCZOS)
-
-        st.image(resized_image, caption="Uploaded Image", use_container_width=False)
-
-        with st.spinner("Performing OCR..."):
-            input_text = pytesseract.image_to_string(image)
+    st.warning("⚠️ Image input via OCR is disabled in the deployed version.")
+    # To re-enable in local use: uncomment below and re-add pytesseract
+    # uploaded_image = st.file_uploader("🖼️ Upload Image File", type=["jpg", "jpeg", "png"])
+    # if uploaded_image:
+    #     image = Image.open(uploaded_image)
+    #     max_width = 300
+    #     w_percent = (max_width / float(image.size[0]))
+    #     h_size = int((float(image.size[1]) * float(w_percent)))
+    #     resized_image = image.resize((max_width, h_size), Image.Resampling.LANCZOS)
+    #     st.image(resized_image, caption="Uploaded Image", use_container_width=False)
+    #     with st.spinner("Performing OCR..."):
+    #         input_text = pytesseract.image_to_string(image)
 
 elif input_mode == "URL":
     url = st.text_input("🔗 Enter Website URL")
@@ -153,10 +145,8 @@ elif input_mode == "URL":
             with st.spinner("Extracting text from website..."):
                 response = requests.get(url)
                 soup = BeautifulSoup(response.content, "html.parser")
-
                 paragraphs = soup.find_all("p")
                 input_text = "\n".join(p.get_text() for p in paragraphs if p.get_text().strip())
-
                 if not input_text.strip():
                     st.warning("⚠️ No readable content found on this page.")
         except Exception as e:
