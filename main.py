@@ -89,11 +89,11 @@ def predict_category(text, rnn_model, lstm_model, word_vectors): # Function to p
 
 # ------------------------- Streamlit UI -----------------------------------
 
-st.title("📰 News Article Category Classifier")  
-st.markdown("Classify news from **text**, **PDF**, **image**, or **website** using AI models (RNN & LSTM) and ConceptNet embeddings.") 
-
-with st.expander("📖 How it works"): 
-    st.markdown("""
+st.title("📰 News Article Category Classifier")  # Initialize Streamlit app with title and description
+st.markdown("Classify news from **text**, **PDF**, **image**, or **website** using AI models (RNN & LSTM) and ConceptNet embeddings.") # Provide a brief description of the app's functionality
+with st.expander("📖 How it works"): # Add a sidebar for navigation
+    # Provide a brief explanation of how the classification works
+    st.markdown("""  
     - Input text is transformed into 300-dimensional word embeddings.
     - If the text has 20 words or fewer, we use a **Recurrent Neural Network (RNN)**.
     - For longer inputs, a **Long Short-Term Memory (LSTM)** model is used.
@@ -110,73 +110,76 @@ input_mode = st.radio("📥 Choose Input Type:", ["Text", "PDF", "Image", "URL"]
 input_text = ""  # Initialize input text variable
 
 if input_mode == "Text": # Text input mode
-    input_text = st.text_area("✍️ Enter news text:", height=200) # Text area for user input
+    input_text = st.text_area("✍️ Enter news text:", height=200) # Text area for user to input news text
 
-elif input_mode == "PDF": # PDF input mode 
-    uploaded_pdf = st.file_uploader("📄 Upload PDF File", type=["pdf"])
-    if uploaded_pdf:
-        with st.spinner("Extracting text from PDF..."):
-            pdf = fitz.open(stream=uploaded_pdf.read(), filetype="pdf")
-            input_text = "\n".join([page.get_text() for page in pdf])
+elif input_mode == "PDF": # PDF input mode
+    uploaded_pdf = st.file_uploader("📄 Upload PDF File", type=["pdf"])  # File uploader for PDF files
+    if uploaded_pdf: # If a PDF file is uploaded
+        with st.spinner("Extracting text from PDF..."): # Show a spinner while processing
+            pdf = fitz.open(stream=uploaded_pdf.read(), filetype="pdf") # Open the PDF file using PyMuPDF
+            input_text = "\n".join([page.get_text() for page in pdf]) # Extract text from each page and join them into a single string
 
-elif input_mode == "Image":
-    uploaded_image = st.file_uploader("🖼️ Upload Image File", type=["jpg", "jpeg", "png"])
-    if uploaded_image:
-        image = Image.open(uploaded_image)
+elif input_mode == "Image": # Image input mode
+    uploaded_image = st.file_uploader("🖼️ Upload Image File", type=["jpg", "jpeg", "png"]) # File uploader for image files
+    if uploaded_image: # If an image file is uploaded
+        image = Image.open(uploaded_image) # Open the image using Pillow
 
-        # Resize image to a smaller version (e.g., width=300 while maintaining aspect ratio)
-        max_width = 300
-        w_percent = (max_width / float(image.size[0]))
-        h_size = int((float(image.size[1]) * float(w_percent)))
-        resized_image = image.resize((max_width, h_size), Image.Resampling.LANCZOS)
+        max_width = 300 # Resize image to a smaller version (e.g., width=300 while maintaining aspect ratio)
+        w_percent = (max_width / float(image.size[0])) # Calculate the width percentage for resizing
+        h_size = int((float(image.size[1]) * float(w_percent))) # Calculate the new height based on the width percentage
+        resized_image = image.resize((max_width, h_size), Image.Resampling.LANCZOS) # Resize the image using Lanczos resampling
+        st.image(resized_image, caption="Uploaded Image", use_container_width=False) # Display the resized image in the app
+        with st.spinner("Performing OCR..."): # Show a spinner while performing OCR
+            input_text = pytesseract.image_to_string(image) # Use Tesseract to extract text from the image
 
-        st.image(resized_image, caption="Uploaded Image", use_container_width=False)
-
-        with st.spinner("Performing OCR..."):
-            input_text = pytesseract.image_to_string(image)
-
-elif input_mode == "URL":
-    url = st.text_input("🔗 Enter Website URL")
-    if url:
-        try:
-            with st.spinner("Extracting text from website..."):
-                response = requests.get(url)
+elif input_mode == "URL": # URL input mode
+    url = st.text_input("🔗 Enter Website URL")  # Text input for website URL
+    if url: # If a URL is provided
+        try: # Fetch the content of the URL 
+            with st.spinner("Extracting text from website..."): # Show a spinner while fetching content
+                response = requests.get(url) # Check if the URL is valid and fetch its content
                 soup = BeautifulSoup(response.content, "html.parser")
+                # Extract text from all paragraph tags in the HTML content
+                paragraphs = soup.find_all("p") # Find all paragraph tags in the HTML content
+                input_text = "\n".join(p.get_text() for p in paragraphs if p.get_text().strip()) # Join the text from all paragraphs into a single string
 
-                # Extract visible text from <p> tags
-                paragraphs = soup.find_all("p")
-                input_text = "\n".join(p.get_text() for p in paragraphs if p.get_text().strip())
+                if not input_text.strip(): # If no readable content is found
+                    st.warning("⚠️ No readable content found on this page.")  # Display a warning message
+        except Exception as e: # Handle any exceptions that occur while fetching the URL
+            st.error(f"❌ Failed to fetch content: {e}") # Display an error message if fetching fails
 
-                if not input_text.strip():
-                    st.warning("⚠️ No readable content found on this page.")
-        except Exception as e:
-            st.error(f"❌ Failed to fetch content: {e}")
 
-# Option to clean text
-col1, col2 = st.columns([1, 1])
-with col1:
-    clean_option = st.checkbox("🧹 Clean and normalize input", value=True)
-with col2:
-    classify_btn = st.button("🚀 Classify")
+# ------------------------- Options Section -----------------------------------
+
+col1, col2 = st.columns([1, 1]) # Create two columns for options
+with col1: # Checkbox to clean and normalize input text
+    clean_option = st.checkbox("🧹 Clean and normalize input", value=True)  # This option allows users to clean the input text by removing punctuation and extra spaces
+    classify_btn = st.button("🚀 Classify")  # Button to clear input text
     
 
-# Classification
-if classify_btn:
-    if not input_text.strip():
-        st.warning("⚠️ Please provide input text from one of the sources.")
-    else:
-        with st.spinner("🔍 Classifying..."):
-            rnn_model, lstm_model = load_models()
-            word_vectors = load_embeddings()
-            processed_text = clean_text(input_text) if clean_option else input_text
-            category, model_used, confidence, full_probs = predict_category(
-                processed_text, rnn_model, lstm_model, word_vectors
+# ------------------------- Classification Section -----------------------------------
+
+if classify_btn: # If the classify button is clicked
+    if not input_text.strip(): # Check if input text is empty
+        st.warning("⚠️ Please provide input text from one of the sources.") # Display a warning if no input text is provided
+    else: # If input text is provided
+        with st.spinner("🔍 Classifying..."): # Show a spinner while classifying the input text
+            rnn_model, lstm_model = load_models() # Load the pre-trained RNN and LSTM models
+            word_vectors = load_embeddings() # Load the pre-trained word embeddings
+            processed_text = clean_text(input_text) if clean_option else input_text # Clean the input text if the clean option is selected
+            # Predict the category using the selected model based on the length of the input text
+            category, model_used, confidence, full_probs = predict_category( 
+                processed_text, rnn_model, lstm_model, word_vectors 
             )
+# ------------------------- Display Results -----------------------------------
 
-        st.success(f"### ✅ Predicted Category: {category}")
-        st.info(f"🧠 Model Used: `{model_used}`")
-        st.metric("📊 Confidence Score", f"{confidence*100:.2f}%")
+        st.success(f"### ✅ Predicted Category: {category}") # Display the predicted category
+        st.info(f"🧠 Model Used: `{model_used}`")  # Display the model used for classification and the confidence score
+        st.metric("📊 Confidence Score", f"{confidence*100:.2f}%")  # Display the confidence score as a percentage
 
-        with st.expander("📈 Prediction Details"):
-            for idx, prob in enumerate(full_probs[0]):
-                st.write(f"{label_map[idx]}: {prob:.4f}")
+
+# ------------------------- Prediction Details -----------------------------------
+
+        with st.expander("📈 Prediction Details"): # Display detailed prediction probabilities for each category
+            for idx, prob in enumerate(full_probs[0]): # Iterate through the prediction probabilities
+                st.write(f"{label_map[idx]}: {prob:.4f}") # Display the category and its corresponding probability
