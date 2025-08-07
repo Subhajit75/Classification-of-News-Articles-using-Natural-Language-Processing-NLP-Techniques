@@ -2,6 +2,7 @@
 
 
 # News Article Category Classifier 🌍🏅💼🔬
+![News Article Classification CI](https://github.com/your-username/Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/actions/workflows/ci.yml/badge.svg)
 
 
 A multi-input AI system that classifies news articles into 4 categories using RNN/LSTM models with ConceptNet embeddings. Supports text, PDFs, images (OCR), and website URLs.
