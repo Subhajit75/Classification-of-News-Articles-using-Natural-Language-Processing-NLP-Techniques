@@ -51,14 +51,14 @@ This project uses **ConceptNet NumberBatch 19.08** - multilingual word embedding
 Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/
 ├── .devcontainer/                  # VS Code dev container settings (optional)
 │   └── devcontainer.json           # Dev container configuration file
-│
+├── .github/
+│   └── workflows/
+│       └── ci.yml                         # GitHub Actions CI workflow
 ├── data/                           # Directory for data files
 │   └── numberbatch-en-19.08.txt   # Local ConceptNet Numberbatch embedding file (~1.3GB)
-│
 ├── models/                         # Pretrained models for text classification
 │   ├── news_classification_model_rnn.h5         # RNN model
 │   └── News_classification_model_LSTM_1.h5      # LSTM model
-│
 ├── README.md                       # Project documentation (overview, setup, usage)
 ├── main.py                         # Main Streamlit app code (UI and logic)
 ├── requirements.txt                # Python dependency list with versions
