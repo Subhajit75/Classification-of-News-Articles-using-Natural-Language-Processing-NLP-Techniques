@@ -6,6 +6,9 @@ import re
 # import pytesseract  # 🔴 Removed for Render deployment
 import requests
 import os
+import urllib.request
+import gzip
+import shutil
 from io import BytesIO
 from PIL import Image
 import fitz  # PyMuPDF
@@ -20,48 +23,31 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 # Load models directly from GitHub repo (already uploaded .h5 files)
 @st.cache_resource
 def load_models():
-    rnn_path = "D:\Project_Env\News Article classification\News Article classification\models\news_classification_model_rnn.h5"
-    lstm_path = "D:\Project_Env\News Article classification\News Article classification\models\News_classification_model_LSTM_1.h5"
+      rnn_path = "models/news_classification_model_rnn.h5"
+      lstm_path = "models/News_classification_model_LSTM_1.h5"
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # ---------------------------- Embedding Download + Load ----------------------------
 
-@st.cache_resource(show_spinner=True)
-def download_embeddings():
-    file_url = "https://github.com/Subhajit75/Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/releases/download/v1.0/numberbatch-en-19.08.txt"
-    local_file = "D:\Project_Env\News Article classification\News Article classification\data\numberbatch-en-19.08.txt"
+try:
+    import gdown
+except ImportError:
+    os.system("pip install gdown")
+    import gdown
 
-    if not os.path.exists(local_file):
-        st.info("📥 Downloading ConceptNet Numberbatch embeddings (1GB)...")
-        response = requests.get(file_url, stream=True)
-        total_size = int(response.headers.get('content-length', 0))
-        block_size = 1024 * 1024  # 1MB
-        progress_bar = st.progress(0)
-        downloaded = 0
+embedding_path = "numberbatch-en-19.08.txt"
 
-        with open(local_file, 'wb') as f:
-            for data in response.iter_content(block_size):
-                f.write(data)
-                downloaded += len(data)
-                progress_bar.progress(min(downloaded / total_size, 1.0))
-        progress_bar.empty()
-        st.success("✅ Embedding file downloaded successfully.")
-    return local_file
+if not os.path.exists(embedding_path):
+    file_id = "18vDkZalMnri75e9r7fefZB2oMtDaJLT9"
+    url = f"https://drive.google.com/uc?id={file_id}"
 
-@st.cache_resource(show_spinner=True)
-def load_embeddings():
-    embeddings = {}
-    with open(download_embeddings(), "rb") as file:
-        header_skipped = False
-        for line in file:
-            if not header_skipped:
-                header_skipped = True
-                continue
-            values = line.decode("utf-8").strip().split(" ")
-            word = values[0]
-            vector = np.asarray(values[1:], dtype='float32')
-            embeddings[word] = vector
-    return embeddings
+    print("Downloading embeddings from Google Drive...")
+    gdown.download(url, embedding_path, quiet=False)
+
+    print("Download complete.")
+else:
+    print("Embeddings file already exists.")
+
 
 # Clean text
 def clean_text(text):
@@ -179,5 +165,6 @@ if classify_btn:
         with st.expander("📈 Prediction Details"):
             for idx, prob in enumerate(full_probs[0]):
                 st.write(f"{label_map[idx]}: {prob:.4f}")
+
 
 
