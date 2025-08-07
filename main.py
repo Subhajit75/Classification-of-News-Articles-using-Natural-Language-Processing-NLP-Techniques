@@ -153,9 +153,10 @@ elif input_mode == "URL": # URL input mode
 
 col1, col2 = st.columns([1, 1]) # Create two columns for options
 with col1: # Checkbox to clean and normalize input text
-    clean_option = st.checkbox("🧹 Clean and normalize input", value=True)  # This option allows users to clean the input text by removing punctuation and extra spaces
-    classify_btn = st.button("🚀 Classify")  # Button to clear input text
-    
+    clean_option = st.checkbox("🧹 Clean and normalize input", value=True)  # Option to clean text
+with col2: # Button to clear input text
+    classify_btn = st.button("🚀 Classify") # Clear input button
+
 
 # ------------------------- Classification Section -----------------------------------
 
@@ -183,3 +184,4 @@ if classify_btn: # If the classify button is clicked
         with st.expander("📈 Prediction Details"): # Display detailed prediction probabilities for each category
             for idx, prob in enumerate(full_probs[0]): # Iterate through the prediction probabilities
                 st.write(f"{label_map[idx]}: {prob:.4f}") # Display the category and its corresponding probability
+
