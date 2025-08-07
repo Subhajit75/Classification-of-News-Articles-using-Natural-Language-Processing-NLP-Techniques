@@ -61,7 +61,6 @@ Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques
 │
 ├── README.md                       # Project documentation (overview, setup, usage)
 ├── main.py                         # Main Streamlit app code (UI and logic)
-│
 ├── requirements.txt                # Python dependency list with versions
 └── runtime.txt                     # Python runtime version for deployment (e.g., "python-3.10")
 
