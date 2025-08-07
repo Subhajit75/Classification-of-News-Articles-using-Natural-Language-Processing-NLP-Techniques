@@ -20,8 +20,8 @@ label_map = {0: "🌍 World", 1: "🏅 Sports", 2: "💼 Business", 3: "🔬 Sci
 # Load models directly from GitHub repo (already uploaded .h5 files)
 @st.cache_resource
 def load_models():
-    rnn_path = "news_classification_model_rnn.h5"
-    lstm_path = "News_classification_model_LSTM_1.h5"
+    rnn_path = "D:\Project_Env\News Article classification\News Article classification\models\news_classification_model_rnn.h5"
+    lstm_path = "D:\Project_Env\News Article classification\News Article classification\models\News_classification_model_LSTM_1.h5"
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path)
 
 # ---------------------------- Embedding Download + Load ----------------------------
@@ -29,7 +29,7 @@ def load_models():
 @st.cache_resource(show_spinner=True)
 def download_embeddings():
     file_url = "https://github.com/Subhajit75/Classification-of-News-Articles-using-Natural-Language-Processing-NLP-Techniques/releases/download/v1.0/numberbatch-en-19.08.txt"
-    local_file = "numberbatch-en-19.08.txt"
+    local_file = "D:\Project_Env\News Article classification\News Article classification\data\numberbatch-en-19.08.txt"
 
     if not os.path.exists(local_file):
         st.info("📥 Downloading ConceptNet Numberbatch embeddings (1GB)...")
@@ -179,3 +179,4 @@ if classify_btn:
         with st.expander("📈 Prediction Details"):
             for idx, prob in enumerate(full_probs[0]):
                 st.write(f"{label_map[idx]}: {prob:.4f}")
+
