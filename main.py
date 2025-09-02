@@ -23,7 +23,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 st.set_page_config(page_title="News Article Category Classifier", layout="wide")     # Set Streamlit page title and layout
 
 
-# ---------------------------- Model and Label Mapping ----------------------------
+# ---------------------------- Model and Label Mapping -----------------------------
 
 # Define label mapping for categories
 # These labels correspond to the indices of the model's output layer
@@ -39,7 +39,7 @@ def load_models():  # Load pre-trained RNN and LSTM models
     return tf.keras.models.load_model(rnn_path), tf.keras.models.load_model(lstm_path) # Load and return the models
 
 
-# ---------------------------- Embedding Download + Load ----------------------------
+# ---------------------------- Embedding Download + Load -----------------------------
 
 @st.cache_resource     # Cache embeddings loading to avoid reloading every time
 def load_embeddings(): # Load pre-trained word embeddings
@@ -184,4 +184,5 @@ if classify_btn: # If the classify button is clicked
         with st.expander("📈 Prediction Details"): # Display detailed prediction probabilities for each category
             for idx, prob in enumerate(full_probs[0]): # Iterate through the prediction probabilities
                 st.write(f"{label_map[idx]}: {prob:.4f}") # Display the category and its corresponding probability
+
 
